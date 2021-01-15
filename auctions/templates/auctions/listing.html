@@ -82,14 +82,15 @@
         </li> 
     </ul>
     <h2>Comment</h2>
-    <div></div>
-    {% for comment in comments %} 
-        <div class="h5"> {{comment.user}} </div>
+    <div class="overflow-auto" style="height: 150px;">
+        {% for comment in comments %}
+        <div class="h5"><a href="{% url 'auctions:profile' comment.user.id %} ">{{comment.user}}</a>  </div>
         <sub>{{comment.date}} </sub>
         <p>{{comment.text}}</p>
-    {% empty %}
+        {% empty %}
         <p>No comments</p>
-    {% endfor %}
+        {% endfor %}
+    </div>
     <form action="{% url 'auctions:comment' listing.id %} " method="post">
         {% csrf_token %}
         <div class="form-group">
