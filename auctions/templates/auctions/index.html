@@ -1,0 +1,71 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{% if active_listing %}
+<h2>Active Listings</h2>
+
+{% elif cat_filter %}
+<h2> "{{catagory}}" Listings</h2>
+
+{% else %}
+
+<h2>All Listings</h2>
+{% endif %}
+
+
+
+{% if error %}
+<div class="alert alert-warning" role="alert">
+    {{error}}
+</div>
+{% endif%}
+<table class="table table-striped">
+    <thead>
+        <tr class="d-flex">
+            <th class="col-6">Image</th>
+            <th class="col-6">Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for listing in listings %}
+        <tr style="transform: rotate(0);" class="d-flex">
+            <td class="col-6">
+                {% if listing.image %}
+                <a class="card-link text-dark stretched-link"
+                        href="{% url 'auctions:listing' listing.id %} "> <img src="{{listing.image.url}} " alt="{{listing.title}} " class="w-50 p-3"></a>
+               
+                {% endif %}
+            </td>
+            <td class="col-6">
+
+                <h3>
+                    <a class="card-link text-dark stretched-link"
+                        href="{% url 'auctions:listing' listing.id %} ">{{listing.title}}</a>
+                    {% if not listing.active %}
+                    <span class="badge badge-pill badge-warning align-top text-uppercase">closed</span>
+                    {% endif %}
+                </h3>
+                
+                <ul>
+                  
+                    {% if listing.description %}
+                    <li>{{listing.description}} </li>
+                    {% endif %}
+                    <li>Listed Price: ${{listing.price}} </li>
+                
+                    <sub>Created {{listing.created }} </sub>
+                   
+                </ul>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td class="col-12"><strong>No Listing</strong></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+{% endblock %}

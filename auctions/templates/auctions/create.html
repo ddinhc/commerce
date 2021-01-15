@@ -1,0 +1,16 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% if edit %}
+      <h2>Editing "{{form.title.value}}"</h2>
+    {% else %}
+    <h2>Create new listing</h2>
+    {% endif %}
+    
+    <form action="{% url 'auctions:create' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form.as_p}}        
+        <input class="btn btn-primary" type="submit" value="Save">
+    </form>
+    
+{% endblock %}

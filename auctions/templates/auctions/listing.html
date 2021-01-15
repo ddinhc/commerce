@@ -1,0 +1,101 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h2 class="d-inline-block">Listing {{listing.id}}: {{listing.title}}  
+    </h2>
+    {% if watchlist_on %}
+        <span class="badge badge-pill badge-secondary align-top">Watchlist</span>
+        <p>
+            <a href="{% url 'auctions:remove_watchlist' listing.id %}" role="button" class="btn btn-outline-secondary">Remove from Watchlist</a>
+        </p>
+    {% else %}
+    <p>
+        <a href="{% url 'auctions:add_watchlist' listing.id %}" role="button" class="btn btn-outline-primary">Add to Watchlist</a>
+    </p>
+    {% endif %}
+    {% if listing.active and user == listing.user%}
+    <p>
+        <a href="{% url 'auctions:close' listing.id %}" role="button" class="btn btn-outline-danger">Close Listing</a>
+    </p>
+    {% elif not listing.active %}
+    <div class="alert alert-warning mx-auto" style="width: 300px;" role="alert">
+       <p class="h2">Listing Closed</p>
+    </div>
+    
+    {% endif %}
+    
+    <p>Description: {{listing.description}} </p>
+ 
+        {% if current_amount%}
+        <p class="h2 bolded"> ${{current_amount | floatformat:2}} </p>
+        {% endif %}
+ 
+    
+    {% if bids.count > 0%}
+    <sub>{{bids.count}} bid(s) so far. </sub>
+    {% elif current_text %}
+    <sub>{{current_text}} </sub>
+    {% else %}
+    <p class="h2 bolded"> ${{listing.price}} </p>
+    <sub>No bids yet.</sub>
+    {% endif %}
+    
+    {% if win_bid and listing.active == False %}
+    <div class="alert alert-success">
+        {% if win_bid.user.username == user.username%}
+        <p>You won the Auction Listing!</p>
+        {% else %}
+        <p><strong><a class="alert-link" href="{% url 'auctions:profile' win_bid.user.id %} ">{{win_bid.user}}</a> </strong> won the Auction Listing with a bid of <strong>{{win_bid.amount}}</strong> on {{win_bid.date}} </p>
+        
+        {% endif %}
+    </div>
+    {% endif %}
+    {% if listing.active %}
+    <form action="{% url 'auctions:bid' listing.id %}" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="number" name="amount" class="form-control" placeholder="Bid" step=".01" required>
+        </div>
+        <input class="btn btn-primary" type="submit" value="Bid">
+    </form>
+
+    {% endif %}
+
+    
+    {% if listing.image %}
+    <div>
+        <img src="{{listing.image.url}} " alt="{{listing.title}} " class="w-25 p-3">
+    </div>
+    
+    {% endif %}
+    <a href=" {% url 'auctions:edit' listing.id %} " class="btn btn-secondary">Edit</a>
+    <h3>Details</h3>
+    <ul>
+        <li>Listed by <a href="{% url 'auctions:profile' listing.user.id %} ">{{listing.user}}</a>  </li>
+        <li>Catagory: 
+            {% for catagory in catagories %}
+            <a href="{% url 'auctions:catagories' catagory.id%} ">#{{catagory}}</a>
+            {% empty %}
+            No catagory Listed
+            {% endfor %}
+        </li> 
+    </ul>
+    <h2>Comment</h2>
+    <div></div>
+    {% for comment in comments %} 
+        <div class="h5"> {{comment.user}} </div>
+        <sub>{{comment.date}} </sub>
+        <p>{{comment.text}}</p>
+    {% empty %}
+        <p>No comments</p>
+    {% endfor %}
+    <form action="{% url 'auctions:comment' listing.id %} " method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <textarea name="comment" id="comment" rows="5" class="form-control"></textarea>
+        </div>
+        <input type="submit" value="Comment" class="btn btn-primary">
+    </form>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h2>Watchlist</h2>
+    <ul>
+        {% for listing in listings %}
+        <li>
+            <a href="{% url 'auctions:listing' listing.id %} ">{{listing}}</a>
+            {% if not listing.active %}
+            <span class="badge badge-pill badge-warning align-top text-uppercase">closed</span>
+            {% endif %}
+        </li>
+        {% empty %}
+        <li>No watchlist</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
